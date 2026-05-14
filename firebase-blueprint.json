@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Public and private information for users.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string", "description": "User's display name." },
+        "email": { "type": "string", "format": "email", "description": "User's primary email." },
+        "photoURL": { "type": "string", "description": "URL to user's profile picture." },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "User's capability level." },
+        "points": { "type": "number", "description": "Total points accumulated." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last time the user profile was modified." }
+      },
+      "required": ["email", "role", "points"]
+    },
+    "Campaign": {
+      "title": "Daily Campaign",
+      "description": "A specific post or task for users to engage with.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Short title of the campaign." },
+        "targetLink": { "type": "string", "description": "The URL of the tweet to engage with." },
+        "description": { "type": "string", "description": "Detailed instructions." },
+        "pointsPerReply": { "type": "number", "description": "Bonus points for replies in this campaign." },
+        "maxEntries": { "type": "number", "description": "Maximum number of allowed submissions before campaign ends." },
+        "currentEntries": { "type": "number", "description": "Number of submissions currently registered." },
+        "active": { "type": "boolean", "description": "Whether the campaign is currently running." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string", "description": "UID of the admin who created it." }
+      },
+      "required": ["title", "targetLink", "active", "createdAt", "createdBy", "currentEntries"]
+    },
+    "Submission": {
+      "title": "Link Submission",
+      "description": "A record of a submitted link for points.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user who submitted." },
+        "link": { "type": "string", "description": "The URL of the submitted tweet/reply." },
+        "type": { "type": "string", "enum": ["tweet", "reply"], "description": "Type of engagement." },
+        "pointsEarned": { "type": "number", "description": "Points awarded for this submission." },
+        "campaignId": { "type": "string", "description": "Optional link to a campaign." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["verified"], "description": "Status of the point award." }
+      },
+      "required": ["userId", "link", "type", "pointsEarned", "createdAt", "status"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and points stats."
+    },
+    "campaigns/{campaignId}": {
+      "schema": "Campaign",
+      "description": "Active and past shilling campaigns."
+    },
+    "submissions/{submissionId}": {
+      "schema": "Submission",
+      "description": "Log of all verified submissions."
+    },
+    "admins/{userId}": {
+      "schema": "object",
+      "description": "Registry of administrative UIDs."
+    }
+  }
+}
