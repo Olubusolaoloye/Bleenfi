@@ -89,7 +89,9 @@ service cloud.firestore {
     // Users collection
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin(); // Only admins can list all users
+      // Leaderboard: any signed-in user can list users (ordered by points)
+      // Admins can list all users for the user management panel
+      allow list: if isSignedIn();
       
       allow create: if isOwner(userId) 
         && isValidUser(request.resource.data)
